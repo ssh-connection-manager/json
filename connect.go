@@ -89,7 +89,7 @@ func (c *Connections) ExistConnectJsonByIndex(alias string, filePath string, nam
 	}
 
 	defer func() {
-		err = c.SetCryptAllData(filePath, nameFile)
+		err = c.SetCryptAllData(filePath, fileKey)
 	}()
 
 	for i, v := range c.Connects {
@@ -119,7 +119,7 @@ func (c *Connections) WriteConnectToJson(connect Connect, filePath string, nameF
 		return err
 	}
 
-	encodedConnect, err := SetCryptData(connect, filePath, nameFile)
+	encodedConnect, err := SetCryptData(connect, filePath, fileKey)
 	if err != nil {
 		return err
 	}
@@ -159,7 +159,7 @@ func (c *Connections) UpdateConnectJson(alias string, connect Connect, filePath 
 		return err
 	}
 
-	cryptData, err := SetCryptData(connect, filePath, nameFile)
+	cryptData, err := SetCryptData(connect, filePath, fileKey)
 	if err != nil {
 		return err
 	}
