@@ -92,7 +92,7 @@ func (c *Connections) ExistConnectJsonByIndex(alias string) (int, error) {
 
 	for i, v := range c.Connects {
 		if v.Alias == alias {
-			return i, errors.New("not found")
+			return i, errors.New("the alias is already in use")
 		}
 	}
 
