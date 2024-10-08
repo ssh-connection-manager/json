@@ -6,13 +6,7 @@ import (
 	"github.com/ssh-connection-manager/file"
 )
 
-func GetPathToConnectFile(filePath string, nameFile string) string {
-	fullPath := file.GetFullPath(filePath, nameFile)
-
-	return fullPath
-}
-
-func CreateBaseJsonDataToFile(fullPath string) error {
+func CreateBaseJsonDataToFile(fl file.File) error {
 	connections := Connections{
 		Connects: []Connect{},
 	}
@@ -22,7 +16,7 @@ func CreateBaseJsonDataToFile(fullPath string) error {
 		return errors.New("error create json: " + err.Error())
 	}
 
-	err = file.WriteFile(fullPath, connect)
+	err = fl.WriteFile(connect)
 	if err != nil {
 		return errors.New("error write to json: " + err.Error())
 	}
