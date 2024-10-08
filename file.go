@@ -6,13 +6,27 @@ import (
 	"github.com/ssh-connection-manager/file"
 )
 
-func Generate(filePath string, nameFile string) error {
-	fullPath := GetPathToConnectFile(filePath, nameFile)
+var fl file.File
 
-	if !file.IsExistFile(fullPath) {
-		file.CreateFile(fullPath)
+func SetFile(file file.File) {
+	fl = file
+}
 
-		err := CreateBaseJsonDataToFile(fullPath)
+func GetFile() file.File {
+	return fl
+}
+
+func Generate(fl file.File) error {
+	SetFile(fl)
+	flConnect := GetFile()
+
+	if !flConnect.IsExistFile() {
+		err := flConnect.CreateFile()
+		if err != nil {
+			return err
+		}
+
+		err = CreateBaseJsonDataToFile(flConnect)
 		if err != nil {
 			return errors.New("err generate base json: " + err.Error())
 		}
