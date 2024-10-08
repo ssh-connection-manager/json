@@ -2,8 +2,6 @@ package json
 
 import (
 	"errors"
-
-	"github.com/ssh-connection-manager/file"
 )
 
 type Connections struct {
@@ -20,10 +18,10 @@ type Connect struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
-func (c *Connections) getConnectData(filePath string, nameFile string, fileKey string) error {
-	fileConnect := GetPathToConnectFile(filePath, nameFile)
+func (c *Connections) getConnectData() error {
+	fileConn := GetFile()
 
-	data, err := file.ReadFile(fileConnect)
+	data, err := fileConn.ReadFile()
 	if err != nil {
 		return err
 	}
@@ -33,7 +31,7 @@ func (c *Connections) getConnectData(filePath string, nameFile string, fileKey s
 		return err
 	}
 
-	err = c.SetDecryptData(filePath, fileKey)
+	err = c.SetDecryptData()
 	if err != nil {
 		return err
 	}
@@ -41,10 +39,10 @@ func (c *Connections) getConnectData(filePath string, nameFile string, fileKey s
 	return nil
 }
 
-func (c *Connections) GetDataForListConnect(filePath string, nameFile string, fileKey string) ([][]string, error) {
+func (c *Connections) GetDataForListConnect() ([][]string, error) {
 	var result [][]string
 
-	err := c.getConnectData(filePath, nameFile, fileKey)
+	err := c.getConnectData()
 	if err != nil {
 		return result, err
 	}
@@ -61,10 +59,10 @@ func (c *Connections) GetDataForListConnect(filePath string, nameFile string, fi
 	return result, nil
 }
 
-func (c *Connections) GetConnectionsAlias(filePath string, nameFile string, fileKey string) ([]string, error) {
+func (c *Connections) GetConnectionsAlias() ([]string, error) {
 	var result []string
 
-	err := c.getConnectData(filePath, nameFile, fileKey)
+	err := c.getConnectData()
 	if err != nil {
 		return result, err
 	}
@@ -80,16 +78,16 @@ func (c *Connections) GetConnectionsAlias(filePath string, nameFile string, file
 	return result, nil
 }
 
-func (c *Connections) ExistConnectJsonByIndex(alias string, filePath string, nameFile string, fileKey string) (int, error) {
+func (c *Connections) ExistConnectJsonByIndex(alias string) (int, error) {
 	var noFound = -1
 
-	err := c.getConnectData(filePath, nameFile, fileKey)
+	err := c.getConnectData()
 	if err != nil {
 		return noFound, err
 	}
 
 	defer func() {
-		err = c.SetCryptAllData(filePath, fileKey)
+		err = c.SetCryptAllData()
 	}()
 
 	for i, v := range c.Connects {
@@ -101,15 +99,15 @@ func (c *Connections) ExistConnectJsonByIndex(alias string, filePath string, nam
 	return noFound, errors.New("not found")
 }
 
-func (c *Connections) WriteConnectToJson(connect Connect, filePath string, nameFile string, fileKey string) error {
-	_, err := c.ExistConnectJsonByIndex(connect.Alias, filePath, nameFile, fileKey)
+func (c *Connections) WriteConnectToJson(connect Connect) error {
+	_, err := c.ExistConnectJsonByIndex(connect.Alias)
 	if err == nil {
 		return err
 	}
 
-	fullPath := GetPathToConnectFile(filePath, nameFile)
+	fileConn := GetFile()
 
-	data, err := file.ReadFile(fullPath)
+	data, err := fileConn.ReadFile()
 	if err != nil {
 		return err
 	}
@@ -119,7 +117,7 @@ func (c *Connections) WriteConnectToJson(connect Connect, filePath string, nameF
 		return err
 	}
 
-	encodedConnect, err := SetCryptData(connect, filePath, fileKey)
+	encodedConnect, err := SetCryptData(connect)
 	if err != nil {
 		return err
 	}
@@ -131,7 +129,7 @@ func (c *Connections) WriteConnectToJson(connect Connect, filePath string, nameF
 		return err
 	}
 
-	err = file.WriteFile(fullPath, deserializationJson)
+	err = fileConn.WriteFile(deserializationJson)
 	if err != nil {
 		return err
 	}
@@ -153,13 +151,15 @@ func (c *Connections) updateJsonDataByIndex(index int, connect Connect) error {
 	return errors.New("connection update error")
 }
 
-func (c *Connections) UpdateConnectJson(alias string, connect Connect, filePath string, nameFile string, fileKey string) error {
-	index, err := c.ExistConnectJsonByIndex(alias, filePath, nameFile, fileKey)
+func (c *Connections) UpdateConnectJson(alias string, connect Connect) error {
+	index, err := c.ExistConnectJsonByIndex(alias)
 	if err != nil {
 		return err
 	}
 
-	cryptData, err := SetCryptData(connect, filePath, fileKey)
+	fileConn := GetFile()
+
+	cryptData, err := SetCryptData(connect)
 	if err != nil {
 		return err
 	}
@@ -174,7 +174,7 @@ func (c *Connections) UpdateConnectJson(alias string, connect Connect, filePath 
 		return err
 	}
 
-	err = file.WriteFile(GetPathToConnectFile(filePath, nameFile), deserializationJson)
+	err = fileConn.WriteFile(deserializationJson)
 	if err != nil {
 		return err
 	}
@@ -189,8 +189,8 @@ func (c *Connections) deleteJsonDataByIndex(index int) {
 	c.Connects = c.Connects[:len(c.Connects)-1]
 }
 
-func (c *Connections) DeleteConnectToJson(alias string, filePath string, nameFile string, fileKey string) error {
-	index, err := c.ExistConnectJsonByIndex(alias, filePath, nameFile, fileKey)
+func (c *Connections) DeleteConnectToJson(alias string) error {
+	index, err := c.ExistConnectJsonByIndex(alias)
 	if err != nil {
 		return err
 	}
@@ -202,7 +202,8 @@ func (c *Connections) DeleteConnectToJson(alias string, filePath string, nameFil
 		return err
 	}
 
-	err = file.WriteFile(GetPathToConnectFile(filePath, nameFile), deserializationJson)
+	fileConn := GetFile()
+	err = fileConn.WriteFile(deserializationJson)
 	if err != nil {
 		return err
 	}
