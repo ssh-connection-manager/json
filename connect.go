@@ -92,16 +92,16 @@ func (c *Connections) ExistConnectJsonByIndex(alias string) (int, error) {
 
 	for i, v := range c.Connects {
 		if v.Alias == alias {
-			return i, nil
+			return i, errors.New("not found")
 		}
 	}
 
-	return noFound, errors.New("not found")
+	return noFound, nil
 }
 
 func (c *Connections) WriteConnectToJson(connect Connect) error {
 	_, err := c.ExistConnectJsonByIndex(connect.Alias)
-	if err == nil {
+	if err != nil {
 		return err
 	}
 
