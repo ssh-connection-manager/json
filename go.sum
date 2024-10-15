@@ -6,3 +6,5 @@ github.com/ssh-connection-manager/file v1.0.1 h1:t0bWe/WlYx/00i1zoO7ABL51oyB+7r1
 github.com/ssh-connection-manager/file v1.0.1/go.mod h1:v6ohozxsgX7s4ze2Vy4sesNBaJ9pcJG0aOmqgffJenA=
 github.com/ssh-connection-manager/file v1.2.0 h1:bwebzUDey017kgFmj6Zk0AP9jL7IABNDIl5UcshZl78=
 github.com/ssh-connection-manager/file v1.2.0/go.mod h1:v6ohozxsgX7s4ze2Vy4sesNBaJ9pcJG0aOmqgffJenA=
+github.com/ssh-connection-manager/file v1.2.1 h1:vVTZWdKUnNf/TVRtflRed4oTYMBcV/N8rnuUKD3CzTc=
+github.com/ssh-connection-manager/file v1.2.1/go.mod h1:v6ohozxsgX7s4ze2Vy4sesNBaJ9pcJG0aOmqgffJenA=
